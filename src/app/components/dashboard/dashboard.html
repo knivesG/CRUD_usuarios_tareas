@@ -1,0 +1,116 @@
+<div class="container">
+      <div class="header">
+        <h1>Dashboard</h1>
+        <p class="subtitle">Resumen general del sistema de gestión de tareas</p>
+      </div>
+
+      <!-- Estadísticas principales -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon users-icon">👥</div>
+          <div class="stat-content">
+            <div class="stat-number">{{ totalUsers }}</div>
+            <div class="stat-label">Usuarios Totales</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon tasks-icon">📋</div>
+          <div class="stat-content">
+            <div class="stat-number">{{ totalTasks }}</div>
+            <div class="stat-label">Tareas Totales</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon pending-icon">⏳</div>
+          <div class="stat-content">
+            <div class="stat-number">{{ pendingTasks }}</div>
+            <div class="stat-label">Tareas Pendientes</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon completed-icon">✅</div>
+          <div class="stat-content">
+            <div class="stat-number">{{ completedTasks }}</div>
+            <div class="stat-label">Tareas Completadas</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Acciones rápidas -->
+      <div class="quick-actions">
+        <h2>Acciones Rápidas</h2>
+        <div class="actions-grid">
+          <a routerLink="/usuarios/nuevo" class="action-card">
+            <div class="action-icon">👤</div>
+            <div class="action-title">Crear Usuario</div>
+            <div class="action-description">Agregar un nuevo usuario al sistema</div>
+          </a>
+
+          <a routerLink="/tareas/nueva" class="action-card">
+            <div class="action-icon">📝</div>
+            <div class="action-title">Crear Tarea</div>
+            <div class="action-description">Agregar una nueva tarea al sistema</div>
+          </a>
+
+          <a routerLink="/usuarios" class="action-card">
+            <div class="action-icon">📊</div>
+            <div class="action-title">Gestionar Usuarios</div>
+            <div class="action-description">Ver y administrar todos los usuarios</div>
+          </a>
+
+          <a routerLink="/tareas" class="action-card">
+            <div class="action-icon">📈</div>
+            <div class="action-title">Gestionar Tareas</div>
+            <div class="action-description">Ver y administrar todas las tareas</div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Tareas recientes -->
+      <div class="recent-tasks">
+        <div class="section-header">
+          <h2>Tareas Recientes</h2>
+          <a routerLink="/tareas" class="view-all-link">Ver todas</a>
+        </div>
+        
+        <div *ngIf="loading" class="loading">
+          Cargando datos...
+        </div>
+
+        <div *ngIf="!loading" class="tasks-list">
+          <div *ngFor="let task of recentTasks" class="task-item">
+            <div class="task-status">
+              <span class="status-dot" [ngClass]="'status-' + task.estado"></span>
+            </div>
+            <div class="task-content">
+              <div class="task-title">{{ task.titulo }}</div>
+              <div class="task-meta">
+                <span *ngIf="task.usuario_nombre" class="task-user">
+                  Asignado a: {{ task.usuario_nombre }}
+                </span>
+                <span *ngIf="!task.usuario_nombre" class="task-user unassigned">
+                  Sin asignar
+                </span>
+                <span class="task-date" *ngIf="task.entrega_fecha">
+                  Vence: {{ task.entrega_fecha | date:'dd/MM/yyyy' }}
+                </span>
+              </div>
+            </div>
+            <div class="task-status-badge">
+              <span class="status-badge" [ngClass]="'badge-' + task.estado">
+                {{ getStatusLabel(task.estado) }}
+              </span>
+            </div>
+          </div>
+
+          <div *ngIf="recentTasks.length === 0" class="no-tasks">
+            <div class="no-tasks-icon">📝</div>
+            <div class="no-tasks-text">No hay tareas recientes</div>
+            <a routerLink="/tareas/nueva" class="btn btn-primary">Crear Primera Tarea</a>
+          </div>
+        </div>
+      </div>
+    </div>

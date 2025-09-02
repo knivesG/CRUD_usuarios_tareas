@@ -1,0 +1,113 @@
+<div class="container">
+      <div class="header">
+        <h2>Tareas</h2>
+        <a routerLink="/tareas/nueva" class="btn btn-primary">
+          <i class="icon">+</i>
+          Nueva Tarea
+        </a>
+      </div>
+
+      <div class="filters">
+        <div class="filter-group">
+          <label for="statusFilter">Filtrar por estado:</label>
+          <select id="statusFilter" [(ngModel)]="statusFilter" (ngModelChange)="applyFilters()">
+            <option value="">Todos</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="en_progreso">En Progreso</option>
+            <option value="completada">Completada</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="userFilter">Filtrar por usuario:</label>
+          <select id="userFilter" [(ngModel)]="userFilter" (ngModelChange)="applyFilters()">
+            <option value="">Todos</option>
+            <option value="unassigned">Sin asignar</option>
+            <option *ngFor="let user of users" [value]="user.id">{{ user.nombre }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <div *ngIf="loading" class="loading">
+            Cargando tareas...
+          </div>
+
+          <div *ngIf="error" class="alert alert-error">
+            {{ error }}
+          </div>
+
+          <div *ngIf="!loading && !error" class="table-container">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Título</th>
+                  <th>Estado</th>
+                  <th>Usuario Asignado</th>
+                  <th>Fecha Vencimiento</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let task of filteredTasks">
+                  <td>{{ task.id }}</td>
+                  <td>
+                    <div class="task-title">{{ task.titulo }}</div>
+                    <div class="task-description">{{ task.descripcion }}</div>
+                  </td>
+                  <td>
+                    <span class="status-badge" [ngClass]="'status-' + task.estado">
+                      {{ getStatusLabel(task.estado) }}
+                    </span>
+                  </td>
+                  <td>
+                    <div *ngIf="task.usuario_nombre; else unassigned">
+                      {{ task.usuario_nombre }}
+                    </div>
+                    <ng-template #unassigned>
+                      <span class="text-muted">Sin asignar</span>
+                    </ng-template>
+                  </td>
+                  <td>{{ task.entrega_fecha ? (task.entrega_fecha | date:'dd/MM/yyyy') : 'Sin fecha' }}</td>
+                  <td class="actions">
+                    <div class="action-group">
+                      <a [routerLink]="['/tareas/editar', task.id]" 
+                         class="btn btn-sm btn-secondary">
+                        Editar
+                      </a>
+                      <button (click)="deleteTask(task)" 
+                              class="btn btn-sm btn-danger">
+                        Eliminar
+                      </button>
+                    </div>
+                    <div class="assignment-actions">
+                      <select 
+                        *ngIf="!task.usuario_id"
+                        (change)="assignTask(task, $event)"
+                        class="assign-select">
+                        <option value="">Asignar a...</option>
+                        <option *ngFor="let user of users" [value]="user.id">
+                          {{ user.nombre }}
+                        </option>
+                      </select>
+                      <button 
+                        *ngIf="task.usuario_id"
+                        (click)="unassignTask(task)"
+                        class="btn btn-sm btn-outline">
+                        Desasignar
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr *ngIf="filteredTasks.length === 0">
+                  <td colspan="6" class="no-data">
+                    No hay tareas que coincidan con los filtros
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
