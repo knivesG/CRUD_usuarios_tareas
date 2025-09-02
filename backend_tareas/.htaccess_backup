@@ -1,0 +1,15 @@
+RewriteEngine On
+
+# CORS headers para Angular
+Header always set Access-Control-Allow-Origin "http://localhost:4200"
+Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+Header always set Access-Control-Allow-Credentials "true"
+
+# Manejar requests OPTIONS (preflight)
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule .* - [R=200,L]
+
+# Redireccionar /tareas a /api/tareas.php
+RewriteRule ^tareas/?$ api/tareas.php [QSA,L]
+RewriteRule ^tareas/([0-9]+)/?$ api/tareas.php?id=$1 [QSA,L]
